@@ -19,7 +19,12 @@ const add = async (ctx) => {
  * @returns {*}
  */
 const list = async (ctx) => {
-    return ctx.body = await ctx.db.any('SELECT * FROM address');
+    const user = ctx.state.user;
+    const query = ctx.state.admin
+        ? 'SELECT * FROM address'
+        : 'SELECT * FROM address WHERE userid=$(id)';
+
+    return ctx.body = await ctx.db.any(query, {id: user});
 };
 
 /**

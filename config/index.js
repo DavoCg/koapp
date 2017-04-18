@@ -7,5 +7,8 @@ module.exports = {
     jwt: {
         secret: 'hgdsvhb@fhdjf!!jehdfbhfshhg'
     },
-    admins: [16]
+    admins: [25],
+    stripe: {
+        key: 'sk_test_T267p7zbNPpNEUVMVU8Si46e'
+    }
 };

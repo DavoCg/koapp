@@ -6,7 +6,7 @@ const {getUpdateQuery} = require('../helpers');
  * @returns {*}
  */
 const list = async (ctx) => {
-    return ctx.body = await ctx.db.any('SELECT * FROM dog');
+    return ctx.body = await ctx.db.any('SELECT * FROM customer');
 };
 
 /**
@@ -16,7 +16,7 @@ const list = async (ctx) => {
  */
 const get = async (ctx) => {
     const {id} = ctx.params;
-    return ctx.body = await ctx.db.oneOrNone('SELECT * FROM dog WHERE id=$(id)', {id});
+    return ctx.body = await ctx.db.oneOrNone('SELECT * FROM customer WHERE id=$(id)', {id});
 };
 
 /**
@@ -28,7 +28,7 @@ const update = async (ctx) => {
     const {id} = ctx.params;
     const body = ctx.request.body;
     const values = getUpdateQuery(body);
-    return ctx.body = await ctx.db.one(`UPDATE dog SET ${values} WHERE id=$(id) RETURNING id`, Object.assign({id}, body));
+    return ctx.body = await ctx.db.one(`UPDATE customer SET ${values} WHERE id=$(id) RETURNING id`, Object.assign({id}, body));
 };
 
 /**
@@ -38,7 +38,7 @@ const update = async (ctx) => {
  */
 const remove = async (ctx) => {
     const {id} = ctx.params;
-    return ctx.body = await ctx.db.one('DELETE FROM dog WHERE id=$(id) RETURNING id', {id});
+    return ctx.body = await ctx.db.one('DELETE FROM customer WHERE id=$(id) RETURNING id', {id});
 };
 
 module.exports = {list, get, update, remove};

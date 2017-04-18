@@ -1,5 +1,6 @@
 module.exports = {
     user: require('./user'),
     pub: require('./public'),
-    address: require('./address')
+    address: require('./address'),
+    payment: require('./payment')
 };

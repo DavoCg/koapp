@@ -1,6 +1,8 @@
 const fields = {
-    user: ['email', 'password', 'firstname', 'lastname'],
-    address: ['city', 'userid']
+    login: ['email', 'password'],
+    register: ['email', 'password', 'firstname', 'lastname'],
+    payment: ['cardId'],
+    address: ['city', 'zip']
 };
 
 const hasUnauthorizedField =  (body, fields) => {
@@ -15,7 +17,7 @@ const hasUnauthorizedField =  (body, fields) => {
 const register = (body) => {
     const {email} = body;
     const messages = [];
-    if(hasUnauthorizedField(body, fields.user)) messages.push(`Authorized fields ${JSON.stringify(fields.user)}`);
+    if(hasUnauthorizedField(body, fields.register)) messages.push(`Authorized fields ${JSON.stringify(fields.register)}`);
     if(email.length < 5) messages.push('Email length should be > 5');
     return {failed: messages.length > 0, message: messages.join(',')};
 };
@@ -26,7 +28,12 @@ const register = (body) => {
  * @returns {{failed: boolean}}
  */
 const login = (body) => {
-    return {failed: false};
+    const {email, password} = body;
+    const messages = [];
+    if(hasUnauthorizedField(body, fields.login)) messages.push(`Authorized fields ${JSON.stringify(fields.login)}`);
+    if(!email || email.length < 5) messages.push('Email length should be > 5');
+    if(!password) messages.push('Password missing');
+    return {failed: messages.length > 0, message: messages.join(',')};
 };
 
 /**
@@ -53,7 +60,22 @@ const addAddress = (body) => {
  * @returns {{failed: boolean}}
  */
 const updateAddress = (body) => {
-    return {failed: false};
+    const messages = [];
+    if(hasUnauthorizedField(body, fields.address)) messages.push(`Authorized fields ${JSON.stringify(fields.address)}`);
+    return {failed: messages.length > 0, message: messages.join(',')};
 };
 
-module.exports = {register, login, updateUser, addAddress, updateAddress};
+/**
+ * Create payment body validation (all required)
+ * @param body
+ * @returns {{failed: boolean}}
+ */
+const addPayment = (body) => {
+    const {cardId} = body;
+    const messages = [];
+    if(hasUnauthorizedField(body, fields.payment)) messages.push(`Authorized fields ${JSON.stringify(fields.payment)}`);
+    if(!cardId) messages.push('Missing cardId');
+    return {failed: messages.length > 0, message: messages.join(',')};
+};
+
+module.exports = {register, login, updateUser, addAddress, updateAddress, addPayment};

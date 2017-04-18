@@ -1,5 +1,7 @@
 const getUpdateQuery = (body) => {
-    return Object.keys(body).reduce((acc, curr) => acc + `${curr} = $(${curr}) `, '');
+    return Object.keys(body)
+        .reduce((acc, curr) => acc.concat([`${curr} = $(${curr})`]), [])
+        .join(',');
 };
 
 const getAddQuery = (body) => {
