@@ -5,7 +5,7 @@ const compress = require('koa-compress');
 const pgp = require('pg-promise')();
 const stripe = require('stripe');
 const config = require('./config');
-const {user, pub, address, payment} = require('./api');
+const {user, pub, address, payment, post, favorite} = require('./api');
 const {error, logger, validate, format, isLogged, isAdmin, isMe} = require('./middlewares');
 
 const app = new Koa();
@@ -15,7 +15,9 @@ const routers = {
     user: new Router({prefix: '/customers'}),
     address: new Router({prefix: '/addresses'}),
     payment: new Router({prefix: '/payments'}),
-    pub: new Router({prefix: '/public'})
+    pub: new Router({prefix: '/public'}),
+    post: new Router({prefix: '/posts'}),
+    favorite: new Router({prefix: '/favorites'})
 };
 
 app.use(compress({threshold: 50}));
@@ -28,6 +30,7 @@ app.context.stripe = stripe((config.stripe.key));
 
 routers.pub
     .post('/login', validate.login, format.login, pub.login)
+    .get('/test', pub.test)
     .post('/register', validate.register, format.register, pub.register);
 
 routers.address
@@ -45,6 +48,21 @@ routers.user
     .delete('/:id', isMe('customer'), user.remove)
     .put('/:id', isMe, validate.updateUser, user.update);
 
+routers.post
+    .use(isLogged)
+    .get('/', post.list)
+    .get('/:id', isMe('post'), post.get)
+    .delete('/:id', isMe('post'), post.remove)
+    .post('/', post.add)
+    .put('/:id', isMe('post'), post.update);
+
+routers.favorite
+    .use(isLogged)
+    .get('/', favorite.list)
+    .post('/', favorite.add)
+    .delete('/:id', isMe('favorite'), favorite.remove);
+
+
 routers.payment
     .use(isLogged)
     .get('/', payment.list)
@@ -55,7 +73,9 @@ routers.payment
 
 app.use(routers.pub.routes());
 app.use(routers.user.routes());
+app.use(routers.post.routes());
 app.use(routers.address.routes());
 app.use(routers.payment.routes());
+app.use(routers.favorite.routes());
 
-app.listen(3000);
+app.listen(3003);
