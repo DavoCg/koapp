@@ -60,6 +60,7 @@ routers.favorite
     .use(isLogged)
     .get('/', favorite.list)
     .post('/', favorite.add)
+    .get('/is/:postId', favorite.isFavorite)
     .delete('/:id', isMe('favorite'), favorite.remove);
 
 

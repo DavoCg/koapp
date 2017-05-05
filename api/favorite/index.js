@@ -6,8 +6,9 @@ const {getAddQuery} = require('../helpers');
  * @returns {*}
  */
 const list = async (ctx) => {
+    const {limit, page} = ctx.query;
     const user = ctx.state.user;
-    const q = 'SELECT * FROM post JOIN favorite ON favorite.userid = post.userid WHERE favorite.userid=$(id)';
+    const q = `SELECT * FROM post JOIN favorite ON favorite.postid = post.id WHERE favorite.userid=$(id) LIMIT ${limit} OFFSET ${(page - 1) * limit}`;
     return ctx.body = await ctx.db.any(q, {id: user});
 };
 
@@ -34,4 +35,15 @@ const remove = async (ctx) => {
     return ctx.body = await ctx.db.one('DELETE FROM favorite WHERE id=$(id) RETURNING id', {id});
 };
 
-module.exports = {list, add, remove};
+/**
+ * return if post is in favorite or not
+ * @param ctx
+ */
+const isFavorite = async (ctx) => {
+    const {postId} = ctx.params;
+    const userId = ctx.state.user;
+    const favorite = await ctx.db.oneOrNone('SELECT * from favorite WHERE userid=${userId} AND postid=$(postId)', {userId, postId});
+    return ctx.body = {favorite: !!favorite};
+};
+
+module.exports = {list, add, remove, isFavorite};
