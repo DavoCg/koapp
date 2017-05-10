@@ -7,7 +7,7 @@ const logger = async (ctx, next) => {
     const start = Date.now();
     await next();
     const duration = Date.now() - start;
-    console.log(`${ctx.method} ${ctx.path} - ${duration} ms`);
+    console.log(`${ctx.status} ${ctx.method} ${ctx.path} - ${duration} ms`);
 };
 
 module.exports = logger;

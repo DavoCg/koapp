@@ -1,5 +1,10 @@
 const {getUpdateQuery} = require('../helpers');
 
+
+const me = async (ctx) => {
+    return ctx.body = {user: ctx.state.user}
+};
+
 /**
  * List all users
  * @param ctx
@@ -41,4 +46,4 @@ const remove = async (ctx) => {
     return ctx.body = await ctx.db.one('DELETE FROM customer WHERE id=$(id) RETURNING id', {id});
 };
 
-module.exports = {list, get, update, remove};
+module.exports = {list, get, update, remove, me};

@@ -30,7 +30,7 @@ app.context.stripe = stripe((config.stripe.key));
 
 routers.pub
     .post('/login', validate.login, format.login, pub.login)
-    .get('/test', pub.test)
+    .post('/login-instagram', pub.loginInstagram)
     .post('/register', validate.register, format.register, pub.register);
 
 routers.address
@@ -44,6 +44,7 @@ routers.address
 routers.user
     .use(isLogged)
     .get('/', isAdmin, user.list)
+    .get('/get/me', user.me)
     .get('/:id', isMe('customer'), user.get)
     .delete('/:id', isMe('customer'), user.remove)
     .put('/:id', isMe, validate.updateUser, user.update);
