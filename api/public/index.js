@@ -18,7 +18,7 @@ const register = async (ctx) => {
     const customer = await ctx.stripe.customers.create({email: body.email});
     const payload = Object.assign({}, body, {stripeid: customer.id});
     const {keys, values} = getAddQuery(payload);
-    const {id} = await ctx.db.one(`INSERT INTO customer(${keys}) VALUES(${values}) RETURNING id`, payload);
+    const {id} = await ctx.db.one(`INSERT INTO customer(${keys}) VALUES(${values}) RETURNING id`, payload).catch;
     await ctx.db.none(`INSERT INTO cart(userid) VALUES($(userid))`, {userid: id});
     return ctx.body = {token: jwt.sign({id, stripe: customer.id}, config.jwt.secret)};
 };

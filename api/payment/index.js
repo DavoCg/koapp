@@ -1,4 +1,5 @@
-const {getAddQuery} = require('../helpers');
+const HTTPStatus = require('http-status');
+const {getAddQuery, error} = require('../helpers');
 
 /**
  * Add an payment for the given user
@@ -49,7 +50,7 @@ const remove = async (ctx) => {
     const card = await ctx.db.oneOrNone('SELECT * FROM payment WHERE id=$(id)', {id});
     const stripe = ctx.state.stripe;
     const cardId = card.stripeid;
-    await ctx.stripe.customers.deleteCard(stripe, cardId);
+    await ctx.stripe.customers.deleteCard(stripe, cardId).catch(error(HTTPStatus.BAD_REQUEST, 'Problem deleting card id:'));
     return ctx.body = await ctx.db.one('DELETE FROM payment WHERE id=$(id) RETURNING id', {id});
 };
 

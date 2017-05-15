@@ -1,4 +1,3 @@
-const HTTPStatus = require('http-status');
 const {getAddQuery, getUpdateQuery} = require('../helpers');
 
 /**
@@ -24,9 +23,6 @@ const list = async (ctx) => {
     const query = ctx.state.admin
         ? 'SELECT * FROM address'
         : 'SELECT * FROM address WHERE userid=$(id)';
-
-    ctx.assert(false, HTTPStatus.BAD_REQUEST, 'Problem listing address');
-
     return ctx.body = await ctx.db.any(query, {id: user});
 };
 

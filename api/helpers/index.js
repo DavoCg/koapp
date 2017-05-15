@@ -16,4 +16,13 @@ const getAddQuery = (body) => {
     }
 };
 
-module.exports = {getUpdateQuery, getAddQuery};
+const error = (status, message) => {
+    return (e) => {
+        const error = new Error();
+        error.status = status;
+        error.message = message;
+        throw error;
+    }
+};
+
+module.exports = {getUpdateQuery, getAddQuery, error};
