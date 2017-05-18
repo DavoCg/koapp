@@ -1,4 +1,4 @@
-const {getAddQuery, getUpdateQuery} = require('../helpers');
+const {getAddQuery} = require('../helpers');
 
 /**
  * Add an address for the given user
@@ -7,10 +7,10 @@ const {getAddQuery, getUpdateQuery} = require('../helpers');
  */
 const add = async (ctx) => {
     const body = ctx.request.body;
-    const userId = ctx.state.user;
-    const payload = Object.assign({}, body, {userId});
+    const userid = ctx.state.user;
+    const payload = Object.assign({quantity: 1}, body, {userid});
     const {keys, values} = getAddQuery(payload);
-    return ctx.body = await ctx.db.one(`INSERT INTO address(${keys}) VALUES(${values}) RETURNING id`, payload);
+    return ctx.body = await ctx.db.one(`INSERT INTO cart_post(${keys}) VALUES(${values}) RETURNING id`, payload);
 };
 
 /**
@@ -18,9 +18,9 @@ const add = async (ctx) => {
  * @param ctx
  * @returns {*}
  */
-const get = async (ctx) => {
-    const {id} = ctx.params;
-    return ctx.body = await ctx.db.oneOrNone('SELECT * FROM address WHERE id=$(id)', {id});
+const list = async (ctx) => {
+    const userId = ctx.state.user;
+    return ctx.body = await ctx.db.any('SELECT * FROM cart_post WHERE userid=$(userId)', {userId});
 };
 
 /**
@@ -30,7 +30,7 @@ const get = async (ctx) => {
  */
 const remove = async (ctx) => {
     const {id} = ctx.params;
-    return ctx.body = await ctx.db.one('DELETE FROM address WHERE id=$(id) RETURNING id', {id});
+    return ctx.body = await ctx.db.one('DELETE FROM cart_post WHERE id=$(id) RETURNING id', {id});
 };
 
-module.exports = {add, get, remove};
+module.exports = {add, list, remove};

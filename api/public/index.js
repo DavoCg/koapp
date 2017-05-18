@@ -44,8 +44,7 @@ const loginInstagram = async (ctx) => {
     const {id} = instagram.user;
     const existingUser = await ctx.db.oneOrNone('SELECT * FROM customer WHERE instagramid=$(id)', {id});
 
-    if(existingUser) {
-        console.log('existing')
+    if(existingUser){
         return ctx.body = {token: jwt.sign({id: existingUser.id, stripe: existingUser.stripeid, instagram: token}, config.jwt.secret)};
     }
 
@@ -53,7 +52,7 @@ const loginInstagram = async (ctx) => {
     const payload = {stripeid: customer.id, instagramid: id};
     const {keys, values} = getAddQuery(payload);
     const user = await ctx.db.one(`INSERT INTO customer(${keys}) VALUES(${values}) RETURNING id`, payload);
-    await ctx.db.none(`INSERT INTO cart(userid) VALUES($(userid))`, {userid: id});
+    await ctx.db.none(`INSERT INTO cart(userid) VALUES($(userid))`, {userid: user.id});
     return ctx.body = {token: jwt.sign({id: user.id, stripe: customer.id, instagram: token}, config.jwt.secret)};
 };
 
