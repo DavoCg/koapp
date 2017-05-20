@@ -10,7 +10,6 @@ const isMe = (table) => {
     return async (ctx, next) => {
         const {user, admin} = ctx.state;
         const id = ctx.params.id;
-
         const resource = await ctx.db.oneOrNone(`SELECT * FROM ${table} WHERE id=$(id)`, {id});
         ctx.assert(resource && resource.id, HTTPStatus.NOT_FOUND, `Cannot find resource ${id}`);
 

@@ -19,7 +19,6 @@ const register = async (ctx) => {
     const payload = Object.assign({}, body, {stripeid: customer.id});
     const {keys, values} = getAddQuery(payload);
     const {id} = await ctx.db.one(`INSERT INTO customer(${keys}) VALUES(${values}) RETURNING id`, payload).catch;
-    await ctx.db.none(`INSERT INTO cart(userid) VALUES($(userid))`, {userid: id});
     return ctx.body = {token: jwt.sign({id, stripe: customer.id}, config.jwt.secret)};
 };
 
@@ -52,7 +51,6 @@ const loginInstagram = async (ctx) => {
     const payload = {stripeid: customer.id, instagramid: id};
     const {keys, values} = getAddQuery(payload);
     const user = await ctx.db.one(`INSERT INTO customer(${keys}) VALUES(${values}) RETURNING id`, payload);
-    await ctx.db.none(`INSERT INTO cart(userid) VALUES($(userid))`, {userid: user.id});
     return ctx.body = {token: jwt.sign({id: user.id, stripe: customer.id, instagram: token}, config.jwt.secret)};
 };
 

@@ -20,7 +20,7 @@ const add = async (ctx) => {
  */
 const list = async (ctx) => {
     const userId = ctx.state.user;
-    return ctx.body = await ctx.db.any('SELECT * FROM cart_post WHERE userid=$(userId)', {userId});
+    return ctx.body = await ctx.db.any('SELECT p.id, p.picture, p.price, p.userid, p.instagrampostid, p.quantity, p.description, c.id AS cartpostid FROM cart_post c JOIN post p ON c.postid = p.id WHERE c.userid=$(userId)', {userId});
 };
 
 /**

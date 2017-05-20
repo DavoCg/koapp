@@ -8,11 +8,9 @@ const Instagram = require('../../instagram');
  */
 const list = async (ctx) => {
     const {limit, page, userid} = ctx.query;
-
     const q = userid
         ? `SELECT * FROM post WHERE userid=$(id) LIMIT ${limit} OFFSET ${(page - 1) * limit}`
         : `SELECT * FROM post LIMIT ${limit} OFFSET ${(page - 1) * limit}`;
-
 
     return ctx.body = await ctx.db.any(q, {id: userid});
 };

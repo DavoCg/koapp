@@ -71,7 +71,7 @@ routers.cart
     .use(isLogged)
     .get('/', cart.list)
     .post('/', cart.add)
-    .delete('/:id', isMe('cart'), cart.remove);
+    .delete('/:id', isMe('cart_post'), cart.remove);
 
 routers.payment
     .use(isLogged)
