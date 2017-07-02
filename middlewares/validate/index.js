@@ -22,5 +22,10 @@ module.exports = {
     updateUser: validation(validators.updateUser),
     addAddress: validation(validators.addAddress),
     updateAddress: validation(validators.updateAddress),
-    addPayment: validation(validators.addPayment)
+    addPayment: validation(validators.addPayment),
+    addPost: validation(validators.addPost),
+    updatePost: validation(validators.updatePost),
+    addFavorite: validation(validators.addFavorite),
+    addCart: validation(validators.addCart),
+    addOrder: validation(validators.addOrder)
 };

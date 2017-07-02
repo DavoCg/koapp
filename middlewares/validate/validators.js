@@ -9,11 +9,6 @@ const hasUnauthorizedField =  (body, fields) => {
     return !Object.keys(body).every(field => fields.includes(field));
 };
 
-/**
- * Register body validation
- * @param body
- * @returns {{failed: boolean, message: string}}
- */
 const register = (body) => {
     const {email} = body;
     const messages = [];
@@ -22,11 +17,6 @@ const register = (body) => {
     return {failed: messages.length > 0, message: messages.join(',')};
 };
 
-/**
- * Login body validation
- * @param body
- * @returns {{failed: boolean}}
- */
 const login = (body) => {
     const {email, password} = body;
     const messages = [];
@@ -36,40 +26,20 @@ const login = (body) => {
     return {failed: messages.length > 0, message: messages.join(',')};
 };
 
-/**
- * Update user body validation (accept partial)
- * @param body
- * @returns {{failed: boolean}}
- */
 const updateUser = (body) => {
     return {failed: false};
 };
 
-/**
- * Create address body validation (all required)
- * @param body
- * @returns {{failed: boolean}}
- */
 const addAddress = (body) => {
     return {failed: false};
 };
 
-/**
- * Create address body validation (accept partial)
- * @param body
- * @returns {{failed: boolean}}
- */
 const updateAddress = (body) => {
     const messages = [];
     if(hasUnauthorizedField(body, fields.address)) messages.push(`Authorized fields ${JSON.stringify(fields.address)}`);
     return {failed: messages.length > 0, message: messages.join(',')};
 };
 
-/**
- * Create payment body validation (all required)
- * @param body
- * @returns {{failed: boolean}}
- */
 const addPayment = (body) => {
     const {cardId} = body;
     const messages = [];
@@ -78,4 +48,25 @@ const addPayment = (body) => {
     return {failed: messages.length > 0, message: messages.join(',')};
 };
 
-module.exports = {register, login, updateUser, addAddress, updateAddress, addPayment};
+const addPost = (body) => {
+    return {failed: false};
+};
+
+const updatePost = (body) => {
+    return {failed: false};
+};
+
+const addFavorite = (body) => {
+    return {failed: false};
+};
+
+const addCart = (body) => {
+    return {failed: false};
+};
+
+const addOrder = (body) => {
+    return {failed: false};
+};
+
+
+module.exports = {register, login, updateUser, addAddress, updateAddress, addPayment, addPost, updatePost, addFavorite, addCart, addOrder};

@@ -1,61 +1,39 @@
-const {getAddQuery, getUpdateQuery} = require('../helpers');
+const {addQuery, updateQuery, camel} = require('../helpers');
+const queries = require('./queries');
 
-/**
- * Add an address for the given user
- * @param ctx
- * @returns {*}
- */
 const add = async (ctx) => {
     const body = ctx.request.body;
     const userId = ctx.state.user;
     const payload = Object.assign({}, body, {userId});
-    const {keys, values} = getAddQuery(payload);
-    return ctx.body = await ctx.db.one(`INSERT INTO address(${keys}) VALUES(${values}) RETURNING id`, payload);
+    const {keys, values} = addQuery(payload);
+    const q = queries.add(keys, values);
+    return ctx.body = await ctx.db.one(q, payload);
 };
 
-/**
- * List all addresses
- * @param ctx
- * @returns {*}
- */
 const list = async (ctx) => {
-    const user = ctx.state.user;
-    const query = ctx.state.admin
-        ? 'SELECT * FROM address'
-        : 'SELECT * FROM address WHERE userid=$(id)';
-    return ctx.body = await ctx.db.any(query, {id: user});
+    const userId = ctx.state.user;
+    const q = queries.list(ctx.state.admin);
+    return ctx.body = await ctx.db.any(q, {userId}).then(camel);
 };
 
-/**
- * Get an address based on id
- * @param ctx
- * @returns {*}
- */
 const get = async (ctx) => {
     const {id} = ctx.params;
-    return ctx.body = await ctx.db.oneOrNone('SELECT * FROM address WHERE id=$(id)', {id});
+    const q = queries.get();
+    return ctx.body = await ctx.db.oneOrNone(q, {id}).then(camel);
 };
 
-/**
- * Update an address by id (update only fields in body)
- * @param ctx
- * @returns {*}
- */
 const update = async (ctx) => {
     const {id} = ctx.params;
     const body = ctx.request.body;
-    const values = getUpdateQuery(body);
-    return ctx.body = await ctx.db.one(`UPDATE address SET ${values} WHERE id=$(id) RETURNING id`, Object.assign({id}, body));
+    const values = updateQuery(body);
+    const q = queries.update(values);
+    return ctx.body = await ctx.db.one(q, Object.assign({id}, body));
 };
 
-/**
- * Remove an user by id
- * @param ctx
- * @returns {*}
- */
 const remove = async (ctx) => {
     const {id} = ctx.params;
-    return ctx.body = await ctx.db.one('DELETE FROM address WHERE id=$(id) RETURNING id', {id});
+    const q = queries.remove();
+    return ctx.body = await ctx.db.one(q, {id});
 };
 
 module.exports = {add, list, get, update, remove};

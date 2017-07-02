@@ -2,8 +2,8 @@ const request = require('superagent');
 const API = 'https://api.instagram.com/v1/';
 
 module.exports = (options = {}) => {
-    const token = options.token || '1296390747.ef34e21.5d89f308e053429c95f24ecd4e05663f';
-    if(!token) throw new Error('No instagram token provided');
+    const token = options.token;
+    //if(!token) throw new Error('No instagram token provided');
 
     const login = (code) => request
         .post('https://api.instagram.com/oauth/access_token')

@@ -5,7 +5,7 @@ const compress = require('koa-compress');
 const pgp = require('pg-promise')();
 const stripe = require('stripe');
 const config = require('./config');
-const {user, pub, address, payment, post, favorite, cart} = require('./api');
+const {user, pub, address, payment, post, favorite, cart, order} = require('./api');
 const {error, logger, validate, format, isLogged, isAdmin, isMe} = require('./middlewares');
 
 const app = new Koa();
@@ -18,6 +18,7 @@ const routers = {
     pub: new Router({prefix: '/public'}),
     post: new Router({prefix: '/posts'}),
     favorite: new Router({prefix: '/favorites'}),
+    order: new Router({prefix: '/orders'}),
     cart: new Router({prefix: '/cart'})
 };
 
@@ -28,8 +29,6 @@ app.use(logger);
 
 app.context.db = pgp(config.db);
 app.context.stripe = stripe((config.stripe.key));
-
-// todo all all validator and control existing ones
 
 routers.pub
     .post('/login', validate.login, format.login, pub.login)
@@ -50,28 +49,34 @@ routers.user
     .get('/get/me', user.me)
     .get('/:id', isMe('customer'), user.get)
     .delete('/:id', isMe('customer'), user.remove)
-    .put('/:id', isMe, validate.updateUser, user.update);
+    .put('/:id', isMe('customer'), validate.updateUser, user.update);
 
 routers.post
     .use(isLogged)
     .get('/', post.list)
+    .get('/trends', post.listTrends)
     .get('/:id', isMe('post'), post.get)
     .delete('/:id', isMe('post'), post.remove)
-    .post('/', post.add)
-    .put('/:id', isMe('post'), post.update);
+    .put('/:id', isMe('post'), validate.updatePost, post.update)
+    .post('/', validate.addPost, post.add);
 
 routers.favorite
     .use(isLogged)
     .get('/', favorite.list)
-    .post('/', favorite.add)
     .get('/is/:postId', favorite.isFavorite)
-    .delete('/:id', isMe('favorite'), favorite.remove);
+    .delete('/:id', isMe('favorite'), favorite.remove)
+    .post('/', validate.addFavorite, favorite.add);
 
 routers.cart
     .use(isLogged)
     .get('/', cart.list)
-    .post('/', cart.add)
-    .delete('/:id', isMe('cart_post'), cart.remove);
+    .delete('/:id', isMe('cart_post'), cart.remove)
+    .post('/', validate.addCart, cart.add);
+
+routers.order
+    .use(isLogged)
+    .get('/', order.list)
+    .post('/', validate.addOrder, order.add);
 
 routers.payment
     .use(isLogged)
@@ -88,5 +93,6 @@ app.use(routers.address.routes());
 app.use(routers.payment.routes());
 app.use(routers.favorite.routes());
 app.use(routers.cart.routes());
+app.use(routers.order.routes());
 
 app.listen(3003);

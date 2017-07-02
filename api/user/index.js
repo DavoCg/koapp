@@ -1,46 +1,40 @@
-const {getUpdateQuery} = require('../helpers');
+const {updateQuery, camel} = require('../helpers');
+const Instagram = require('../../instagram');
 
+const getInstagramUserSelf = async (token) => {
+    const instagram = Instagram({token});
+    const result = await instagram.userSelf();
+    const user = result.body.data;
+    return {picture: user.profile_picture, username: user.username}
+};
 
 const me = async (ctx) => {
-    return ctx.body = {user: ctx.state.user}
+    const {user: userId, instagram: token} = ctx.state;
+    const userInstagram = token && false ? await getInstagramUserSelf(token) : {};
+    const user = await ctx.db.oneOrNone('SELECT * FROM customer WHERE id=$(userId)', {userId}).then(camel);
+    return ctx.body = Object.assign(user, userInstagram);
 };
 
-/**
- * List all users
- * @param ctx
- * @returns {*}
- */
 const list = async (ctx) => {
-    return ctx.body = await ctx.db.any('SELECT * FROM customer');
+    return ctx.body = await ctx.db.any('SELECT * FROM customer').then(camel);
 };
 
-/**
- * Get one user based on id
- * @param ctx
- * @returns {*}
- */
 const get = async (ctx) => {
     const {id} = ctx.params;
-    return ctx.body = await ctx.db.oneOrNone('SELECT * FROM customer WHERE id=$(id)', {id});
+    return ctx.body = await ctx.db.oneOrNone('SELECT * FROM customer WHERE id=$(id)', {id}).then(camel);
 };
 
-/**
- * Update a user by id (update only fields in body)
- * @param ctx
- * @returns {*}
- */
 const update = async (ctx) => {
     const {id} = ctx.params;
+    const {instagram: token} = ctx.state;
     const body = ctx.request.body;
-    const values = getUpdateQuery(body);
-    return ctx.body = await ctx.db.one(`UPDATE customer SET ${values} WHERE id=$(id) RETURNING id`, Object.assign({id}, body));
+    const values = updateQuery(body);
+    await ctx.db.one(`UPDATE customer SET ${values} WHERE id=$(id) RETURNING id`, Object.assign({id}, body));
+    const userInstagram = token ? await getInstagramUserSelf(token) : {};
+    const user = await ctx.db.oneOrNone('SELECT * FROM customer WHERE id=$(id)', {id}).then(camel)
+    return ctx.body = Object.assign(user, userInstagram);
 };
 
-/**
- * Remove a user by id
- * @param ctx
- * @returns {*}
- */
 const remove = async (ctx) => {
     const {id} = ctx.params;
     return ctx.body = await ctx.db.one('DELETE FROM customer WHERE id=$(id) RETURNING id', {id});
