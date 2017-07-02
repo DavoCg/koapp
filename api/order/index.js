@@ -1,4 +1,5 @@
 const {addQuery, camel} = require('../helpers');
+const queries = require('./queries');
 
 const groupByReference = (orders) => {
     return orders.reduce((acc, curr) => {
@@ -21,7 +22,8 @@ const decrementQuantity = async (id, amount) => {
 };
 
 const getCart = async (ctx, userId) => {
-    const cart = await ctx.db.any('SELECT * FROM cart_post WHERE user_id=$(userId)', {userId}).then(camel);
+    const q = queries.getCart();
+    const cart = await ctx.db.any(q, {userId}).then(camel);
     return cart.reduce((acc, x) => {
         acc.ids.push(x.postId);
         acc.cartItemIds.push(x.id);
@@ -40,14 +42,16 @@ const add = async (ctx) => {
     return ctx.body = await Promise.all(ids.map(postId => {
         const payload = {reference, userId, postId, quantity: 1};
         const {keys, values} = addQuery(payload);
-        return ctx.db.one(`INSERT INTO order_post(${keys}) VALUES(${values}) RETURNING id`, payload)
+        const q = queries.add(keys, values);
+        return ctx.db.one(q, payload)
     }));
 };
 
 const list = async (ctx) => {
     const userId = ctx.state.user;
-    const orders = await ctx.db.any('SELECT * FROM order_post WHERE user_id=$(userId)', {userId}).then(camel);
-    const posts = await Promise.all(orders.map(order => ctx.db.one('SELECT * FROM post WHERE id=$(postId)', {postId: order.postId}).then(camel)));
+    const q = queries.list();
+    const orders = await ctx.db.any(q, {userId}).then(camel);
+    const posts = await Promise.all(orders.map(order => ctx.db.one(queries.getPost(), {postId: order.postId}).then(camel)));
     const ordersWithPost = orders.map((order, i) => Object.assign(order, {post: posts[i]}));
     return ctx.body = groupByReference(ordersWithPost);
 };

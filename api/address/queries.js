@@ -8,16 +8,14 @@ const add = (keys, values) => {
     return `
         INSERT INTO address(${keys})
         VALUES(${values})
-        RETURNING id
-    `;
+        RETURNING id`;
 };
 
 const get = () => {
     return `
         SELECT *
         FROM address
-        WHERE id=$(id)
-    `;
+        WHERE id=$(id)`;
 };
 
 const update = (values) => {
@@ -25,16 +23,14 @@ const update = (values) => {
         UPDATE address
         SET ${values}
         WHERE id=$(id)
-        RETURNING id
-    `;
+        RETURNING id`;
 };
 
 const remove = () => {
     return `
         DELETE FROM address
         WHERE id=$(id)
-        RETURNING id
-    `;
+        RETURNING id`;
 };
 
 module.exports = {list, add, get, update, remove};

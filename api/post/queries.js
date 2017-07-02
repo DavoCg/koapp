@@ -15,8 +15,7 @@ const list = (userId, limit, page) => {
         JOIN customer c
         ON p.user_id = c.id
         LIMIT ${limit}
-        OFFSET ${(page - 1) * limit}
-    `;
+        OFFSET ${(page - 1) * limit}`;
 };
 
 const listTrends = () => {
@@ -25,16 +24,14 @@ const listTrends = () => {
         FROM post p
         JOIN customer c
         ON p.user_id = c.id
-        LIMIT 5
-    `;
+        LIMIT 5`;
 };
 
 const add = (keys, values) => {
     return `
         INSERT INTO post(${keys})
         VALUES(${values})
-        RETURNING id
-    `;
+        RETURNING id`;
 };
 
 const get = () => {
@@ -43,8 +40,7 @@ const get = () => {
         FROM post p
         JOIN customer c
         ON p.user_id = c.id
-        WHERE id=$(id)
-    `;
+        WHERE id=$(id)`;
 };
 
 const update = (values) => {
@@ -52,16 +48,14 @@ const update = (values) => {
         UPDATE post
         SET ${values}
         WHERE id=$(id)
-        RETURNING id
-    `;
+        RETURNING id`;
 };
 
 const remove = () => {
     return `
         DELETE FROM post
         WHERE id=$(id)
-        RETURNING id
-    `;
+        RETURNING id`;
 };
 
 module.exports = {list, listTrends, add, get, update, remove};

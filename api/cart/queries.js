@@ -6,24 +6,21 @@ const list = () => {
         ON c.post_id = p.id
         JOIN customer
         ON p.user_id = customer.id
-        WHERE c.user_id=$(userId)
-    `;
+        WHERE c.user_id=$(userId)`;
 };
 
 const add = (keys, values) => {
     return `
         INSERT INTO cart_post(${keys})
         VALUES(${values})
-        RETURNING id
-    `;
+        RETURNING id`;
 };
 
 const remove = () => {
     return `
         DELETE FROM cart_post
         WHERE id=$(id)
-        RETURNING id
-    `;
+        RETURNING id`;
 };
 
 module.exports = {list, add, remove};
