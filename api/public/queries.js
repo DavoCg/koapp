@@ -1,21 +1,22 @@
-const list = (userId, limit, page) => {
+const findUser = () => {
+    return `
+        SELECT *
+        FROM customer
+        WHERE email=$(email)`;
+};
 
+const findInstagramUser = () => {
+    return `
+        SELECT *
+        FROM customer
+        WHERE instagram_id=$(id)`;
 };
 
 const add = (keys, values) => {
-
+    return `
+        INSERT INTO customer(${keys})
+        VALUES(${values})
+        RETURNING id`;
 };
 
-const get = () => {
-
-};
-
-const update = (values) => {
-
-};
-
-const remove = () => {
-
-};
-
-module.exports = {list, add, get, update, remove};
+module.exports = {findUser, findInstagramUser, add};
