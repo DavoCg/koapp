@@ -30,15 +30,15 @@ const loginInstagram = async (ctx) => {
     const result = await Instagram({}).login(body.code);
     const instagram = result.body;
     const token = instagram.access_token;
-    const {id} = instagram.user;
+    const {id, username} = instagram.user;
     const existingUser = await ctx.db.oneOrNone(queries.findInstagramUser(), {id}).then(camel);
 
-    if(existingUser){
+    if(existingUser.id){
         return ctx.body = {token: jwt.sign({id: existingUser.id, stripe: existingUser.stripeId, instagram: token}, config.jwt.secret)};
     }
 
     const customer = await ctx.stripe.customers.create({email: `${id}@getmona.co`});
-    const payload = {stripeId: customer.id, instagramId: id};
+    const payload = {stripeId: customer.id, instagramId: id, username: username};
     const {keys, values} = addQuery(payload);
     const q = queries.add(keys, values);
     const user = await ctx.db.one(q, payload);

@@ -21,7 +21,7 @@ const add = async (ctx) => {
     const data = post.body.data;
 
     // todo handle if not from instagram
-    
+
     const payload = {
         userId: userId,
         price: body.price,
@@ -61,3 +61,20 @@ const remove = async (ctx) => {
 };
 
 module.exports = {list, get, update, remove, add, listTrends};
+
+
+//const body = ctx.request.body;
+//const userId = ctx.state.user;
+//
+//// todo handle if not from instagram
+//
+//console.log('userId :', userId);
+//
+//const payload = {
+//    userId: userId,
+//    price: body.price,
+//    quantity: body.quantity,
+//    description: body.description,
+//    instagramPostId: '1394205412592686464_4003511610',
+//    picture: body.picture
+//};

@@ -11,7 +11,7 @@ const getInstagramUserSelf = async (token) => {
 
 const me = async (ctx) => {
     const {user: userId, instagram: token} = ctx.state;
-    const userInstagram = token && false ? await getInstagramUserSelf(token) : {};
+    const userInstagram = token ? await getInstagramUserSelf(token) : {};
     const q = queries.me();
     const user = await ctx.db.oneOrNone(q, {userId}).then(camel);
     return ctx.body = Object.assign(user, userInstagram);
