@@ -1,4 +1,4 @@
-const list = (userId, limit, page) => {
+const list = (userId, page, limit) => {
     return userId
     ? `
         SELECT p.id, p.user_id, c.username, p.quantity, p.price, p.picture

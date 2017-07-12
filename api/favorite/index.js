@@ -4,7 +4,7 @@ const queries = require('./queries');
 const list = async (ctx) => {
     const {limit, page} = ctx.query;
     const userId = ctx.state.user;
-    const q = queries.list(limit, page);
+    const q = queries.list(page, limit);
     return ctx.body = await ctx.db.any(q, {userId}).then(camel);
 };
 
