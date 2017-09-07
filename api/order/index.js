@@ -51,8 +51,10 @@ const list = async (ctx) => {
     const userId = ctx.state.user;
     const q = queries.list();
     const orders = await ctx.db.any(q, {userId}).then(camel);
-    const firstPost = await ctx.db.one(queries.getPost(), {postId: orders[0].postId}).then(camel);
-    orders[0] = Object.assign({picture: firstPost.picture}, orders[0]);
+    if(orders.length > 0){
+        const firstPost = await ctx.db.one(queries.getPost(), {postId: orders[0].postId}).then(camel);
+        orders[0] = Object.assign({picture: firstPost.picture}, orders[0]);
+    }
     return ctx.body = groupByReference(orders);
 };
 

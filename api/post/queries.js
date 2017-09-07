@@ -36,7 +36,7 @@ const add = (keys, values) => {
 
 const get = () => {
     return `
-        SELECT p.id, p.user_id, c.username, p.quantity, p.price, p.picture
+        SELECT p.id, p.user_id, c.username, p.quantity, p.price, p.picture, p.description
         FROM post p
         JOIN customer c
         ON p.user_id = c.id

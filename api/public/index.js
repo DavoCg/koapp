@@ -9,7 +9,7 @@ const register = async (ctx) => {
     const user = await ctx.db.oneOrNone(queries.findUser(), body);
     ctx.assert(!user, HTTPStatus.BAD_REQUEST, 'User already exist');
     const customer = await ctx.stripe.customers.create({email: body.email});
-    const payload = Object.assign({}, body, {stripeId: customer.id, username: `mona-${body.email}`});
+    const payload = Object.assign({}, body, {stripeId: customer.id, username: body.username});
     const {keys, values} = addQuery(payload);
     const q = queries.add(keys, values);
     const {id} = await ctx.db.one(q, payload);

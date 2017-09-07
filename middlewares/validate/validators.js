@@ -1,6 +1,8 @@
+const validator = require('validator');
+
 const fields = {
     login: ['email', 'password'],
-    register: ['email', 'password', 'firstname', 'lastname'],
+    register: ['email', 'password', 'username'],
     payment: ['cardId'],
     address: ['number', 'street', 'city', 'zip', 'phone', 'additional']
 };
@@ -10,10 +12,12 @@ const hasUnauthorizedField =  (body, fields) => {
 };
 
 const register = (body) => {
-    const {email} = body;
+    const {email, username, password} = body;
     const messages = [];
     if(hasUnauthorizedField(body, fields.register)) messages.push(`Authorized fields ${JSON.stringify(fields.register)}`);
-    if(email.length < 5) messages.push('Email length should be > 5');
+    if(!email || !validator.isEmail(email)) messages.push('Should provide a valid email');
+    if(!username) messages.push('Should provide an username');
+    if(!password) messages.push('Should provide a password');
     return {failed: messages.length > 0, message: messages.join(',')};
 };
 
@@ -21,7 +25,7 @@ const login = (body) => {
     const {email, password} = body;
     const messages = [];
     if(hasUnauthorizedField(body, fields.login)) messages.push(`Authorized fields ${JSON.stringify(fields.login)}`);
-    if(!email || email.length < 5) messages.push('Email length should be > 5');
+    if(!email || !validator.isEmail(email)) messages.push('Should provide a valid email');
     if(!password) messages.push('Password missing');
     return {failed: messages.length > 0, message: messages.join(',')};
 };
