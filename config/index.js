@@ -17,11 +17,11 @@ const config = {
     },
     all: {
         db: {
-            host: 'horton.elephantsql.com',
+            host: 'elmer.db.elephantsql.com',
             port: 5432,
-            user: 'ivxtuwqe',
-            database: 'ivxtuwqe',
-            password: 'eD3dZ87mVMUN8CThgyYujccuTbx-UbTa',
+            user: 'qhzkcnhf',
+            database: 'qhzkcnhf',
+            password: '8MDWfmBcwbLbHXuJIP0QPejQbBmsh4Nj',
             poolSize: 1
         },
         jwt: {

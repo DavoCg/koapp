@@ -1,1 +1,1 @@
-CREATE DATABASE mona;
+CREATE DATABASE furnitures;
