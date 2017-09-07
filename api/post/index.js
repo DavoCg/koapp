@@ -1,6 +1,5 @@
 const {updateQuery, addQuery, camel} = require('../helpers');
 const queries = require('./queries');
-const Instagram = require('../../instagram');
 
 const list = async (ctx) => {
     const {limit, page, userId} = ctx.query;
@@ -16,19 +15,13 @@ const listTrends = async (ctx) => {
 const add = async (ctx) => {
     const body = ctx.request.body;
     const userId = ctx.state.user;
-    const instagram = Instagram({token: ctx.state.instagram});
-    const post = await instagram.media(body.mediaId);
-    const data = post.body.data;
-
-    // todo handle if not from instagram
 
     const payload = {
         userId: userId,
         price: body.price,
         quantity: body.quantity,
         description: body.description,
-        instagramPostId: data.id,
-        picture: data.images.standard_resolution.url
+        picture: body.picture
     };
 
     const {keys, values} = addQuery(payload);
@@ -38,12 +31,9 @@ const add = async (ctx) => {
 
 const get = async (ctx) => {
     const {id} = ctx.params;
-    const instagram = Instagram({token: ctx.state.instagram});
     const q = queries.get();
-    const post = await ctx.db.oneOrNone(q, {id}).then(camel);
-    const igPost = await instagram.media(post.instagramPostId);
-    const likes = igPost.body.data.likes.count;
-    return ctx.body = Object.assign({likes}, post);
+    return ctx.body = await ctx.db.oneOrNone(q, {id}).then(camel);
+
 };
 
 const update = async (ctx) => {
@@ -61,20 +51,3 @@ const remove = async (ctx) => {
 };
 
 module.exports = {list, get, update, remove, add, listTrends};
-
-
-//const body = ctx.request.body;
-//const userId = ctx.state.user;
-//
-//// todo handle if not from instagram
-//
-//console.log('userId :', userId);
-//
-//const payload = {
-//    userId: userId,
-//    price: body.price,
-//    quantity: body.quantity,
-//    description: body.description,
-//    instagramPostId: '1394205412592686464_4003511610',
-//    picture: body.picture
-//};

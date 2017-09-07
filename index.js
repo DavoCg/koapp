@@ -32,7 +32,6 @@ app.context.stripe = stripe((config.stripe.key));
 
 routers.pub
     .post('/login', validate.login, format.login, pub.login)
-    .post('/login-instagram', pub.loginInstagram)
     .post('/register', validate.register, format.register, pub.register);
 
 routers.address
@@ -76,6 +75,7 @@ routers.cart
 routers.order
     .use(isLogged)
     .get('/', order.list)
+    .get('/ref/:reference', order.get)
     .post('/', validate.addOrder, order.add);
 
 routers.payment
@@ -96,3 +96,5 @@ app.use(routers.cart.routes());
 app.use(routers.order.routes());
 
 app.listen(3003);
+
+module.exports = app;

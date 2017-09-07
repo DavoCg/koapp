@@ -1,20 +1,10 @@
 const {updateQuery, camel} = require('../helpers');
-const Instagram = require('../../instagram');
 const queries = require('./queries');
 
-const getInstagramUserSelf = async (token) => {
-    const instagram = Instagram({token});
-    const result = await instagram.userSelf();
-    const user = result.body.data;
-    return {picture: user.profile_picture, username: user.username}
-};
-
 const me = async (ctx) => {
-    const {user: userId, instagram: token} = ctx.state;
-    const userInstagram = token ? await getInstagramUserSelf(token) : {};
+    const {user: userId} = ctx.state;
     const q = queries.me();
-    const user = await ctx.db.oneOrNone(q, {userId}).then(camel);
-    return ctx.body = Object.assign(user, userInstagram);
+    return ctx.body = await ctx.db.oneOrNone(q, {userId}).then(camel);
 };
 
 const list = async (ctx) => {
@@ -30,14 +20,11 @@ const get = async (ctx) => {
 
 const update = async (ctx) => {
     const {id} = ctx.params;
-    const {instagram: token} = ctx.state;
     const body = ctx.request.body;
     const values = updateQuery(body);
     const q = queries.update(values);
     await ctx.db.one(q, Object.assign({id}, body));
-    const userInstagram = token ? await getInstagramUserSelf(token) : {};
-    const user = await ctx.db.oneOrNone(queries.get(), {id}).then(camel);
-    return ctx.body = Object.assign(user, userInstagram);
+    return ctx.body = await ctx.db.oneOrNone(queries.get(), {id}).then(camel);
 };
 
 const remove = async (ctx) => {

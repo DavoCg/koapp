@@ -14,8 +14,7 @@ CREATE TABLE customer (
     first_name VARCHAR(255),
     last_name VARCHAR(255),
     password VARCHAR(255),
-    stripe_id VARCHAR(255) NOT NULL,
-    instagram_id VARCHAR(255) UNIQUE
+    stripe_id VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE post (
@@ -23,7 +22,6 @@ CREATE TABLE post (
     user_id INT NOT NULL REFERENCES customer(id),
     picture VARCHAR(255) NOT NULL,
     price INT NOT NULL,
-    instagram_post_id VARCHAR(255),
     quantity INT,
     description VARCHAR(255)
 );

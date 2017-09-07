@@ -16,7 +16,6 @@ const isLogged = async (ctx, next) => {
         const decoded = jwt.verify(auth, config.jwt.secret);
         ctx.state.user = decoded.id;
         ctx.state.stripe = decoded.stripe;
-        ctx.state.instagram = decoded.instagram;
         ctx.state.admin = config.admins.includes(decoded.id);
         return next();
     }

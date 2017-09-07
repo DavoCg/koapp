@@ -2,7 +2,7 @@ const fields = {
     login: ['email', 'password'],
     register: ['email', 'password', 'firstname', 'lastname'],
     payment: ['cardId'],
-    address: ['city', 'zip']
+    address: ['number', 'street', 'city', 'zip', 'phone', 'additional']
 };
 
 const hasUnauthorizedField =  (body, fields) => {
@@ -31,7 +31,14 @@ const updateUser = (body) => {
 };
 
 const addAddress = (body) => {
-    return {failed: false};
+    const messages = [];
+    if(hasUnauthorizedField(body, fields.address)) messages.push(`Authorized fields ${JSON.stringify(fields.address)}`);
+    if(!body.number) messages.push('Number missing');
+    if(!body.street) messages.push('Street missing');
+    if(!body.city) messages.push('City missing');
+    if(!body.zip) messages.push('Zip missing');
+    if(!body.phone) messages.push('Phone missing');
+    return {failed: messages.length > 0, message: messages.join(',')};
 };
 
 const updateAddress = (body) => {
