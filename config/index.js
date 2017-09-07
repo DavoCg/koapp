@@ -21,7 +21,7 @@ const config = {
             port: 5432,
             user: 'qhzkcnhf',
             database: 'qhzkcnhf',
-            password: '8MDWfmBcwbLbHXuJIP0QPejQbBmsh4Nj',
+            password: 'ZVHMMpQagM2laISW1nhwNShLcT6BKV2t',
             poolSize: 1
         },
         jwt: {
