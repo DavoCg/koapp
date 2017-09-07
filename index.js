@@ -54,7 +54,7 @@ routers.post
     .use(isLogged)
     .get('/', post.list)
     .get('/trends', post.listTrends)
-    .get('/:id', isMe('post'), post.get)
+    .get('/:id', post.get)
     .delete('/:id', isMe('post'), post.remove)
     .put('/:id', isMe('post'), validate.updatePost, post.update)
     .post('/', validate.addPost, post.add);
