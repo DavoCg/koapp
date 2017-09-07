@@ -10,7 +10,7 @@ const jwt = require('jsonwebtoken');
 const isLogged = async (ctx, next) => {
     const {authorization, Authorization} = ctx.headers;
     const auth = authorization || Authorization;
-    if(!auth) return ctx.throw('No token provided', HTTPStatus.UNAUTHORIZED);
+    if(!auth) return ctx.throw('No token provided bitch', HTTPStatus.UNAUTHORIZED);
     
     try {
         const decoded = jwt.verify(auth, config.jwt.secret);
