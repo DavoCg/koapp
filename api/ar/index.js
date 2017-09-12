@@ -15,6 +15,8 @@ const createDirectory = (name) => {
 };
 
 const process = async (name) => {
+    console.log('name :', name);
+    
     const folder = `${ASSETS_FOLDER}/${name}.scnassets/`;
     const optimized = `${ASSETS_FOLDER}/${name}-optimized.scnassets`;
     const final = `${name}-optimized.scnassets.zip`;
@@ -31,6 +33,9 @@ const upload = async (ctx) => {
     const file = ctx.request.body.files.data;
     const name = Date.now();
     createDirectory(name);
+
+    console.log('file :', file.path);
+
     const reader = fs.createReadStream(file.path);
     const stream = fs.createWriteStream(getDestination(name));
     reader.pipe(stream);
