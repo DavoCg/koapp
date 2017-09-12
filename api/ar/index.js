@@ -1,43 +1,40 @@
 const fs = require('fs');
 const path = require('path');
-const exec = require('child_process').exec;
-const {error} = require('../helpers');
+const exec = require('exec-then');
 
 const ASSETS_FOLDER = 'ar-files';
 const OPTIMIZE_SCRIPT = './ar-scripts/copySceneKitAssets';
 const ZIP_SCRIPT = 'zip -r';
 
-const createDirAndGetDestination = (name) => {
-    fs.mkdirSync(`${__dirname}/../../${ASSETS_FOLDER}/${name}.scnassets`);
+const getDestination = (name) => {
     return `./${ASSETS_FOLDER}/${name}.scnassets/${name}.dae`;
 };
 
-const process = (name, done) => {
+const createDirectory = (name) => {
+    return fs.mkdirSync(path.join(__dirname, '..', '..', `${ASSETS_FOLDER}/${name}.scnassets`));
+};
+
+const process = async (name) => {
     const folder = `${ASSETS_FOLDER}/${name}.scnassets/`;
     const optimized = `${ASSETS_FOLDER}/${name}-optimized.scnassets`;
-
+    const final = `${name}-optimized.scnassets.zip`;
     const optimize = `${OPTIMIZE_SCRIPT} ${folder} -o ${optimized}`;
     const zip = `${ZIP_SCRIPT} ${optimized}.zip ${optimized}`;
 
-    return exec(optimize, (err) => {
-        if(err) return done(err);
-        return exec(zip, (err) => {
-            if(err) return done(err);
-            return done(null, `${name}-optimized.scnassets.zip`)
-        });
-    });
+    await exec(optimize);
+    await exec(zip);
+
+    return Promise.resolve(final);
 };
 
 const upload = async (ctx) => {
     const file = ctx.request.body.files.data;
     const name = Date.now();
+    createDirectory(name);
     const reader = fs.createReadStream(file.path);
-    const stream = fs.createWriteStream(createDirAndGetDestination(name));
+    const stream = fs.createWriteStream(getDestination(name));
     reader.pipe(stream);
-    reader.on('end', () => process(name, (err, file) => {
-        if(err) return error(400, 'Probleme');
-        return ctx.body = {file};
-    }));
+    reader.on('end', () => process(name).then(file => ctx.body = {file}));
 };
 
 module.exports = {upload};
