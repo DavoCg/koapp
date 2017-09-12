@@ -1,15 +1,16 @@
 const Koa = require('koa');
 const Router = require('koa-router');
-const bodyParser = require('koa-bodyparser');
+const bodyParser = require('koa-body');
 const compress = require('koa-compress');
+const serve = require('koa-static');
 const pgp = require('pg-promise')();
 const stripe = require('stripe');
 const config = require('./config');
-const {user, pub, address, payment, post, favorite, cart, order} = require('./api');
+const {user, pub, address, payment, post, favorite, cart, order, ar} = require('./api');
 const {error, logger, validate, format, isLogged, isAdmin, isMe} = require('./middlewares');
 
 const app = new Koa();
-const parser = bodyParser();
+const parser = bodyParser({multipart: true});
 
 const routers = {
     user: new Router({prefix: '/customers'}),
@@ -19,9 +20,11 @@ const routers = {
     post: new Router({prefix: '/posts'}),
     favorite: new Router({prefix: '/favorites'}),
     order: new Router({prefix: '/orders'}),
-    cart: new Router({prefix: '/cart'})
+    cart: new Router({prefix: '/cart'}),
+    ar: new Router({prefix: '/ar'})
 };
 
+app.use(serve('./ar-files'));
 app.use(compress({threshold: 50}));
 app.use(parser);
 app.use(error);
@@ -85,6 +88,8 @@ routers.payment
     .delete('/:id', isMe('payment'), payment.remove)
     .post('/', validate.addPayment, payment.add);
 
+routers.ar
+    .post('/upload', ar.upload);
 
 app.use(routers.pub.routes());
 app.use(routers.user.routes());
@@ -94,6 +99,7 @@ app.use(routers.payment.routes());
 app.use(routers.favorite.routes());
 app.use(routers.cart.routes());
 app.use(routers.order.routes());
+app.use(routers.ar.routes());
 
 app.listen(3003);
 

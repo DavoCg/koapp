@@ -6,5 +6,6 @@ module.exports = {
     post: require('./post'),
     favorite: require('./favorite'),
     cart: require('./cart'),
-    order: require('./order')
+    order: require('./order'),
+    ar: require('./ar')
 };
