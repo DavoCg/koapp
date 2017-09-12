@@ -23,7 +23,7 @@ const process = async (name) => {
     const optimize = `${OPTIMIZE_SCRIPT} ${folder} -o ${optimized}`;
     const zip = `${ZIP_SCRIPT} ${optimized}.zip ${optimized}`;
 
-    await exec(optimize);
+    await exec(optimize).then((a, b, c) => console.log(a, b, c));
     await exec(zip);
 
     return Promise.resolve(final);
